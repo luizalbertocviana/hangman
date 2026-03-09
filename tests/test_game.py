@@ -2,16 +2,15 @@
 Unit tests for the core game engine module.
 """
 
+
 import pytest
-from datetime import datetime
 
 from hangman.game import (
     GameEngine,
+    GameNotStartedError,
     GameState,
     GuessResult,
-    GameError,
     InvalidGuessError,
-    GameNotStartedError,
 )
 from hangman.words import Difficulty, WordEntry
 

@@ -3,17 +3,16 @@ Unit tests for the word list manager module.
 """
 
 import json
-import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import pytest
+
 from hangman.words import (
-    WordListManager,
-    WordEntry,
     Difficulty,
-    WordListError,
-    WordListNotFoundError,
     EmptyWordListError,
+    WordEntry,
+    WordListNotFoundError,
 )
 
 

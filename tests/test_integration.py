@@ -4,16 +4,14 @@ Integration tests for Hangman CLI.
 Tests full game sessions and component interactions.
 """
 
-import pytest
 from io import StringIO
 from unittest.mock import patch
 
+from hangman.config import ConfigurationManager
 from hangman.game import GameEngine
 from hangman.input_handler import InputHandler, InputType
-from hangman.renderer import UIRenderer
-from hangman.stats import SessionStats, StatsManager
-from hangman.words import Difficulty, WordEntry, WordListManager
-from hangman.config import Config, ConfigurationManager
+from hangman.stats import SessionStats
+from hangman.words import Difficulty, WordEntry
 
 
 class TestFullGameSession:
@@ -24,7 +22,6 @@ class TestFullGameSession:
         # Setup components
         game_engine = GameEngine(max_incorrect_guesses=6)
         input_handler = InputHandler()
-        renderer = UIRenderer(enable_colors=False)
         stats = SessionStats()
 
         # Start game
@@ -234,8 +231,8 @@ class TestConfigurationIntegration:
 
     def test_config_affects_game_engine(self):
         """Test that configuration affects game engine behavior."""
-        from tempfile import TemporaryDirectory
         from pathlib import Path
+        from tempfile import TemporaryDirectory
 
         with TemporaryDirectory() as tmpdir:
             config_file = Path(tmpdir) / "config.yaml"
@@ -270,7 +267,6 @@ class TestEndToEndGameFlow:
         # Initialize all components
         game_engine = GameEngine(max_incorrect_guesses=6)
         input_handler = InputHandler()
-        renderer = UIRenderer(enable_colors=False)
         stats = SessionStats()
 
         # Start game
@@ -284,7 +280,7 @@ class TestEndToEndGameFlow:
 
             result = input_handler.validate_letter(guess)
             if result.is_valid and result.input_type == InputType.LETTER:
-                guess_result = game_engine.make_guess(result.value)
+                game_engine.make_guess(result.value)
 
         # Verify game ended
         assert game_engine.is_game_over() is True

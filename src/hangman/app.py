@@ -88,6 +88,13 @@ class ApplicationController:
         if not self.initialize():
             return 1
 
+        # Type narrowing: components are guaranteed to be initialized after initialize()
+        assert self._renderer is not None
+        assert self._word_manager is not None
+        assert self._game_engine is not None
+        assert self._input_handler is not None
+        assert self._stats_manager is not None
+
         try:
             self._running = True
 
@@ -119,15 +126,13 @@ class ApplicationController:
             self._renderer.display_goodbye()
 
             # Save stats before exit
-            if self._stats_manager:
-                self._stats_manager.save()
+            self._stats_manager.save()
 
             return 0
 
         except QuitRequestedError:
             self._renderer.display_goodbye()
-            if self._stats_manager:
-                self._stats_manager.save()
+            self._stats_manager.save()
             return 0
 
         except Exception as e:
@@ -136,20 +141,26 @@ class ApplicationController:
 
     def _display_startup_stats(self) -> None:
         """Display statistics from previous sessions."""
-        if self._stats_manager:
-            stats = self._stats_manager.get_stats()
-            if stats.games_played > 0:
-                self._renderer.display_message(
-                    f"Previous sessions: {stats.games_played} games, "
-                    f"{stats.games_won} wins ({stats.get_win_rate():.1f}%)",
-                    MessageType.INFO,
-                )
-                print()
+        # Type narrowing: components guaranteed non-None after initialize()
+        assert self._stats_manager is not None
+        assert self._renderer is not None
+
+        stats = self._stats_manager.get_stats()
+        if stats.games_played > 0:
+            self._renderer.display_message(
+                f"Previous sessions: {stats.games_played} games, "
+                f"{stats.games_won} wins ({stats.get_win_rate():.1f}%)",
+                MessageType.INFO,
+            )
+            print()
 
     def _play_game(self) -> None:
         """Play a single game session."""
-        if not self._game_engine or not self._word_manager or not self._input_handler:
-            return
+        # Type narrowing: components guaranteed non-None after initialize()
+        assert self._game_engine is not None
+        assert self._word_manager is not None
+        assert self._input_handler is not None
+        assert self._renderer is not None
 
         # Select a random word
         try:
@@ -176,8 +187,9 @@ class ApplicationController:
 
     def _render_game(self) -> None:
         """Render the current game state."""
-        if not self._game_engine or not self._renderer:
-            return
+        # Type narrowing: components guaranteed non-None after initialize()
+        assert self._game_engine is not None
+        assert self._renderer is not None
 
         state = self._game_engine.state
         self._renderer.clear_screen()
@@ -189,8 +201,10 @@ class ApplicationController:
 
     def _handle_guess(self) -> None:
         """Handle a single guess from the player."""
-        if not self._game_engine or not self._input_handler or not self._renderer:
-            return
+        # Type narrowing: components guaranteed non-None after initialize()
+        assert self._game_engine is not None
+        assert self._input_handler is not None
+        assert self._renderer is not None
 
         try:
             # Get input
@@ -222,8 +236,10 @@ class ApplicationController:
 
     def _handle_game_over(self) -> None:
         """Handle game end conditions."""
-        if not self._game_engine or not self._renderer or not self._stats_manager:
-            return
+        # Type narrowing: components guaranteed non-None after initialize()
+        assert self._game_engine is not None
+        assert self._renderer is not None
+        assert self._stats_manager is not None
 
         state = self._game_engine.state
 
@@ -247,8 +263,9 @@ class ApplicationController:
         Returns:
             True if player wants to play again.
         """
-        if not self._renderer or not self._input_handler:
-            return False
+        # Type narrowing: components guaranteed non-None after initialize()
+        assert self._renderer is not None
+        assert self._input_handler is not None
 
         self._renderer.display_replay_prompt()
 

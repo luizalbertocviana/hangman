@@ -8,41 +8,34 @@ Tests based on requirements from specs.md including:
 - Security requirements
 """
 
-import pytest
-from io import StringIO
-from datetime import datetime
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import json
 
+import pytest
+
+from hangman.config import (
+    Config,
+    ConfigurationError,
+    ConfigurationManager,
+)
 from hangman.game import (
     GameEngine,
-    GameState,
-    GuessResult,
-    GameError,
-    InvalidGuessError,
     GameNotStartedError,
+    GameState,
 )
 from hangman.input_handler import (
     InputHandler,
     InputType,
-    ValidationResult,
-    QuitRequestedError,
 )
-from hangman.renderer import UIRenderer, MessageType
+from hangman.renderer import MessageType, UIRenderer
 from hangman.stats import SessionStats, StatsManager
 from hangman.words import (
-    WordListManager,
-    WordEntry,
     Difficulty,
-    WordListError,
-    WordListNotFoundError,
     EmptyWordListError,
-)
-from hangman.config import (
-    Config,
-    ConfigurationManager,
-    ConfigurationError,
+    WordEntry,
+    WordListManager,
+    WordListNotFoundError,
 )
 
 
@@ -664,7 +657,6 @@ class TestNonFunctionalRequirements:
 
     def test_memory_efficiency(self):
         """Test memory efficiency of components (NFR-2.3)."""
-        import sys
 
         # Create multiple game engines
         engines = [GameEngine() for _ in range(100)]
@@ -716,7 +708,7 @@ class TestReplayAndSessionManagement:
         word = WordEntry(word="game", category="test", difficulty=Difficulty.EASY)
 
         # Play multiple games
-        for game_num in range(5):
+        for _game_num in range(5):
             engine.start_game(word)
 
             # Win each game

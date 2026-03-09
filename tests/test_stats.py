@@ -2,11 +2,11 @@
 Unit tests for the statistics module.
 """
 
-import json
-import pytest
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+
+import pytest
 
 from hangman.stats import SessionStats, StatsManager
 

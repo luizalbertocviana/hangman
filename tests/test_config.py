@@ -2,17 +2,18 @@
 Unit tests for the configuration manager module.
 """
 
-import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import pytest
+
 from hangman.config import (
     Config,
+    ConfigurationError,
+    ConfigurationManager,
+    DisplayConfig,
     GameConfig,
     PathConfig,
-    DisplayConfig,
-    ConfigurationManager,
-    ConfigurationError,
 )
 
 

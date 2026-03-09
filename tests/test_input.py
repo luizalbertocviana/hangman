@@ -2,13 +2,10 @@
 Unit tests for the input handler module.
 """
 
-import pytest
 
 from hangman.input_handler import (
-    InputHandler,
     InputType,
     ValidationResult,
-    QuitRequestedError,
 )
 
 
