@@ -16,6 +16,7 @@ src/hangman.egg-info/entry_points.txt
 src/hangman.egg-info/requires.txt
 src/hangman.egg-info/top_level.txt
 tests/test_config.py
+tests/test_edge_cases.py
 tests/test_game.py
 tests/test_input.py
 tests/test_integration.py
