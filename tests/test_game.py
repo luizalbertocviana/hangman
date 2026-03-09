@@ -131,10 +131,11 @@ class TestGameEngine:
 
         assert game_engine.get_hangman_stage() == 0
 
-        game_engine.make_guess("1")
+        # Use letters not in "python" for incorrect guesses
+        game_engine.make_guess("a")
         assert game_engine.get_hangman_stage() == 1
 
-        game_engine.make_guess("2")
+        game_engine.make_guess("b")
         assert game_engine.get_hangman_stage() == 2
 
     def test_win_condition(self, game_engine):
@@ -154,8 +155,8 @@ class TestGameEngine:
         """Test that game detects loss condition."""
         game_engine.start_game(word_entry)
 
-        # Make 6 incorrect guesses
-        for letter in "xyzwvq":
+        # Make 6 incorrect guesses (letters not in "python": a, b, c, d, e, f)
+        for letter in "abcdef":
             game_engine.make_guess(letter)
 
         assert game_engine.is_game_over() is True
@@ -167,8 +168,9 @@ class TestGameEngine:
 
         assert game_engine.get_remaining_lives() == 6
 
-        game_engine.make_guess("1")
-        game_engine.make_guess("2")
+        # Use letters not in "python" for incorrect guesses
+        game_engine.make_guess("a")
+        game_engine.make_guess("b")
 
         assert game_engine.get_remaining_lives() == 4
 

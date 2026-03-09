@@ -55,8 +55,8 @@ class TestFullGameSession:
         # Start game
         game_engine.start_game(word_entry)
 
-        # Make 6 incorrect guesses
-        incorrect_letters = "xyzwvq"
+        # Make 6 incorrect guesses (letters not in "python": a, b, c, d, e, f)
+        incorrect_letters = "abcdef"
         for letter in incorrect_letters:
             result = input_handler.validate_letter(letter)
             if result.is_valid:

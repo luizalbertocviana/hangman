@@ -93,9 +93,9 @@ class TestInputHandler:
         """Test that short quit commands work."""
         result = input_handler.validate_letter("q")
 
-        # 'q' alone should be treated as a letter, not quit
-        # Only full words like 'quit' should trigger quit
-        assert result.input_type == InputType.LETTER
+        # 'q' is treated as a quit command for quick exit
+        # QUIT_COMMANDS includes: quit, exit, q
+        assert result.input_type == InputType.QUIT
 
     def test_validate_replay_yes(self, input_handler):
         """Test validating yes responses."""
