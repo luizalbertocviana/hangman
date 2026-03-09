@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "hangman",
+  "project_id": "6a292c06-c8fb-4994-9e8a-d2c4e8bdf5bd"
+}
