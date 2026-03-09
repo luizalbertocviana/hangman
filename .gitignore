@@ -1,4 +1,29 @@
+# Deployment artifacts and configuration
+dist/*.whl
+dist/*.tar.gz
+*.egg-info/
 
-# Dolt database files (added by bd init)
-.dolt/
-*.db
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
