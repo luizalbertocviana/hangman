@@ -1,0 +1,13 @@
+game:
+  max_incorrect_guesses: 6
+
+paths:
+  word_lists: "./data/words"
+  stats_file: "~/.hangman/stats.json"
+
+display:
+  enable_colors: true
+  min_terminal_width: 80
+  min_terminal_height: 24
+
+language: "en"

@@ -1,0 +1,346 @@
+# Hangman CLI Game
+
+A command-line interface (CLI) application for playing the classic Hangman word-guessing game.
+
+## Features
+
+- **Classic Hangman Gameplay**: Guess letters to reveal hidden words before the hangman is complete
+- **Multiple Categories**: Animals, countries, fruits, programming terms, sports, and more
+- **Difficulty Levels**: Easy, Medium, and Hard word selections
+- **Session Statistics**: Track your wins, losses, and streaks across sessions
+- **Cross-Platform**: Works on Linux, macOS, and Windows
+- **Colorful Terminal UI**: ANSI color support for enhanced visual feedback
+- **Configurable**: Customize game settings via YAML configuration
+
+## Requirements
+
+- Python 3.9 or higher
+- PyYAML (for configuration support)
+
+## Installation
+
+### From Source
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd hangman
+
+# Install in development mode
+pip install -e .
+
+# Or install with development dependencies
+pip install -e ".[dev]"
+```
+
+### Direct Run
+
+```bash
+# Run directly without installation
+python -m hangman
+```
+
+## Usage
+
+### Starting the Game
+
+```bash
+# If installed via pip
+hangman
+
+# Or run as module
+python -m hangman
+
+# Show help
+hangman --help
+
+# Show version
+hangman --version
+```
+
+### Game Controls
+
+| Input | Action |
+|-------|--------|
+| `a-z` | Guess a letter |
+| `quit` or `exit` | Exit the game |
+| `Ctrl+C` | Exit immediately |
+| `yes`/`y` | Play again (after game ends) |
+| `no`/`n` | Exit (after game ends) |
+
+### Gameplay Rules
+
+1. You have **6 incorrect guesses** before the game ends
+2. Enter one letter at a time (a-z)
+3. Correct guesses reveal all instances of that letter in the word
+4. Incorrect guesses advance the hangman drawing
+5. Win by guessing all letters before the hangman is complete
+6. Each game shows the word category and difficulty level
+
+## Game Display
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║                    WELCOME TO HANGMAN                     ║
+╠═══════════════════════════════════════════════════════════╣
+║                                                           ║
+║  Guess the word before the hangman is complete!           ║
+║                                                           ║
+║  Rules:                                                   ║
+║  • You have 6 incorrect guesses before game over          ║
+║  • Enter one letter at a time (a-z)                       ║
+║  • Type 'quit' to exit the game                           ║
+║  • Correct letters are revealed in the word               ║
+║  • Don't let the hangman be completed!                    ║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+### Example Game Session
+
+```
+Category: ANIMALS | Difficulty: EASY
+
+    +---+
+    |   |
+        |
+        |
+        |
+        |
+  =========
+
+  _ _ _ _ _
+
+Lives: 6/6
+
+Guessed: 
+
+Enter a letter (or 'quit'): e
+
+  ✓ 'E' is in the word!
+
+    +---+
+    |   |
+        |
+        |
+        |
+        |
+  =========
+
+  _ _ _ _ e _
+
+Lives: 6/6
+
+Guessed: e
+```
+
+## Configuration
+
+The game uses a YAML configuration file for customization.
+
+### Default Configuration Location
+
+- **Project**: `config/default.yaml`
+- **User**: `~/.hangman/config.yaml`
+
+### Configuration Options
+
+```yaml
+# Game settings
+game:
+  max_incorrect_guesses: 6  # Number of lives (default: 6)
+
+# File paths
+paths:
+  word_lists: "./data/words"      # Path to word list directory
+  stats_file: "~/.hangman/stats.json"  # Path to statistics file
+
+# Display settings
+display:
+  enable_colors: true       # Enable ANSI colors (default: true)
+  min_terminal_width: 80    # Minimum terminal width (default: 80)
+  min_terminal_height: 24   # Minimum terminal height (default: 24)
+
+# Language (for future i18n support)
+language: "en"
+```
+
+### Custom Configuration
+
+Create `~/.hangman/config.yaml` with your preferred settings:
+
+```yaml
+game:
+  max_incorrect_guesses: 8
+
+display:
+  enable_colors: false
+```
+
+## Word Lists
+
+Word lists are stored in JSON format in the `data/words/` directory.
+
+### Word List Format
+
+```json
+{
+  "version": "1.0",
+  "categories": {
+    "animals": {
+      "easy": ["cat", "dog", "bird"],
+      "medium": ["elephant", "giraffe"],
+      "hard": ["chameleon", "armadillo"]
+    }
+  }
+}
+```
+
+### Adding Custom Words
+
+Edit `data/words/custom.json` to add your own word categories:
+
+```json
+{
+  "version": "1.0",
+  "description": "My custom words",
+  "categories": {
+    "movies": {
+      "easy": ["rocky", "jaws"],
+      "medium": ["titanic", "avatar"],
+      "hard": ["inception", "interstellar"]
+    }
+  }
+}
+```
+
+## Statistics
+
+The game tracks your performance across sessions. Statistics are saved to `~/.hangman/stats.json`.
+
+### Tracked Statistics
+
+- **Games Played**: Total number of games played
+- **Games Won**: Number of victories
+- **Games Lost**: Number of defeats
+- **Win Rate**: Percentage of games won
+- **Current Streak**: Consecutive wins
+- **Best Streak**: Longest win streak achieved
+- **Total Guesses**: Total letter guesses made
+
+### Statistics Display
+
+At the start of each session, you'll see your previous statistics:
+
+```
+Previous sessions: 25 games, 18 wins (72.0%)
+```
+
+## Architecture
+
+### Components
+
+| Module | Description |
+|--------|-------------|
+| `game.py` | Core game engine - state management, guess evaluation |
+| `input_handler.py` | User input processing and validation |
+| `renderer.py` | Terminal UI rendering and ASCII art |
+| `words.py` | Word list loading and filtering |
+| `stats.py` | Session statistics tracking and persistence |
+| `config.py` | Configuration management |
+| `app.py` | Application controller - orchestrates components |
+
+### Project Structure
+
+```
+hangman/
+├── src/hangman/
+│   ├── __init__.py
+│   ├── __main__.py      # Entry point
+│   ├── app.py           # Application controller
+│   ├── game.py          # Game engine
+│   ├── input_handler.py # Input processing
+│   ├── renderer.py      # UI rendering
+│   ├── words.py         # Word management
+│   ├── stats.py         # Statistics
+│   └── config.py        # Configuration
+├── data/words/
+│   ├── words.json       # Default word lists
+│   └── custom.json      # Custom word lists
+├── config/
+│   └── default.yaml     # Default configuration
+├── tests/
+│   ├── test_game.py
+│   ├── test_input.py
+│   ├── test_renderer.py
+│   ├── test_words.py
+│   ├── test_stats.py
+│   ├── test_config.py
+│   └── test_integration.py
+└── pyproject.toml
+```
+
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=src/hangman
+
+# Run specific test file
+pytest tests/test_game.py -v
+```
+
+### Code Quality
+
+```bash
+# Type checking
+mypy src/hangman
+
+# Linting
+ruff check src/hangman
+
+# Formatting
+black src/hangman tests
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Terminal too small**
+- Ensure your terminal is at least 80x24 characters
+- Configure `min_terminal_width` and `min_terminal_height` in config
+
+**Colors not displaying**
+- Set `enable_colors: false` in configuration
+- Some terminals may not support ANSI colors
+
+**Word lists not loading**
+- Verify `data/words/` directory exists
+- Check `word_lists` path in configuration
+- Ensure JSON files are valid
+
+**Statistics not saving**
+- Check write permissions for `~/.hangman/` directory
+- Verify `stats_file` path in configuration
+
+## License
+
+MIT License - See LICENSE file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linters
+5. Submit a pull request
+
+---
+
+**Enjoy playing Hangman!** 🎮

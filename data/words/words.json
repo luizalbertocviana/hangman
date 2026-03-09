@@ -1,0 +1,195 @@
+{
+  "version": "1.0",
+  "categories": {
+    "animals": {
+      "easy": [
+        "cat",
+        "dog",
+        "bird",
+        "fish",
+        "frog",
+        "lion",
+        "bear",
+        "wolf",
+        "fox",
+        "duck"
+      ],
+      "medium": [
+        "elephant",
+        "giraffe",
+        "kangaroo",
+        "dolphin",
+        "penguin",
+        "tiger",
+        "zebra",
+        "monkey",
+        "rabbit",
+        "eagle"
+      ],
+      "hard": [
+        "chameleon",
+        "armadillo",
+        "platypus",
+        "rhinoceros",
+        "hippopotamus",
+        "crocodile",
+        "alligator",
+        "flamingo",
+        "peacock",
+        "hummingbird"
+      ]
+    },
+    "countries": {
+      "easy": [
+        "usa",
+        "china",
+        "japan",
+        "india",
+        "france",
+        "spain",
+        "italy",
+        "germany",
+        "brazil",
+        "chile"
+      ],
+      "medium": [
+        "argentina",
+        "colombia",
+        "venezuela",
+        "ecuador",
+        "portugal",
+        "sweden",
+        "norway",
+        "denmark",
+        "finland",
+        "poland"
+      ],
+      "hard": [
+        "liechtenstein",
+        "kyrgyzstan",
+        "uzbekistan",
+        "tajikistan",
+        "turkmenistan",
+        "kazakhstan",
+        "azerbaijan",
+        "georgia",
+        "armenia",
+        "moldova"
+      ]
+    },
+    "fruits": {
+      "easy": [
+        "apple",
+        "banana",
+        "grape",
+        "lemon",
+        "lime",
+        "peach",
+        "pear",
+        "plum",
+        "kiwi",
+        "mango"
+      ],
+      "medium": [
+        "orange",
+        "papaya",
+        "coconut",
+        "pineapple",
+        "strawberry",
+        "blueberry",
+        "raspberry",
+        "blackberry",
+        "watermelon",
+        "cantaloupe"
+      ],
+      "hard": [
+        "pomegranate",
+        "passionfruit",
+        "dragonfruit",
+        "starfruit",
+        "jackfruit",
+        "durian",
+        "guava",
+        "lychee",
+        "persimmon",
+        "tangerine"
+      ]
+    },
+    "programming": {
+      "easy": [
+        "code",
+        "data",
+        "loop",
+        "bool",
+        "null",
+        "true",
+        "false",
+        "int",
+        "char",
+        "byte"
+      ],
+      "medium": [
+        "python",
+        "java",
+        "script",
+        "function",
+        "variable",
+        "array",
+        "object",
+        "class",
+        "method",
+        "module"
+      ],
+      "hard": [
+        "polymorphism",
+        "encapsulation",
+        "inheritance",
+        "abstraction",
+        "recursion",
+        "algorithm",
+        "debugging",
+        "framework",
+        "repository",
+        "middleware"
+      ]
+    },
+    "sports": {
+      "easy": [
+        "soccer",
+        "tennis",
+        "golf",
+        "rugby",
+        "hockey",
+        "boxing",
+        "skiing",
+        "surfing",
+        "cycling",
+        "running"
+      ],
+      "medium": [
+        "basketball",
+        "volleyball",
+        "baseball",
+        "softball",
+        "cricket",
+        "badminton",
+        "squash",
+        "fencing",
+        "judo",
+        "karate"
+      ],
+      "hard": [
+        "archery",
+        "gymnastics",
+        "weightlifting",
+        "triathlon",
+        "marathon",
+        "wrestling",
+        "taekwondo",
+        "bobsledding",
+        "luge",
+        "curling"
+      ]
+    }
+  }
+}
