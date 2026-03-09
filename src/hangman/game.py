@@ -164,8 +164,9 @@ class GameEngine:
         if not self._started:
             raise GameNotStarted("Game has not been started")
 
+        # Validate the guess (but not for duplicates - we handle that below)
         if not self._state.is_game_over:
-            self._validate_guess(letter)
+            self._validate_guess_non_duplicate(letter)
 
         letter = letter.lower().strip()
         is_duplicate = letter in self._state.guessed_letters
@@ -214,6 +215,25 @@ class GameEngine:
 
         if letter.lower() in self._state.guessed_letters:
             raise InvalidGuess(f"You already guessed '{letter}'")
+
+    def _validate_guess_non_duplicate(self, letter: str) -> None:
+        """
+        Validate a guess attempt, excluding duplicate check.
+
+        This is used by make_guess() to validate input format while
+        allowing duplicate guesses to be handled gracefully.
+
+        Args:
+            letter: The letter to validate.
+
+        Raises:
+            InvalidGuess: If the guess is invalid (not a duplicate).
+        """
+        if len(letter) != 1:
+            raise InvalidGuess("Please enter only one letter at a time")
+
+        if not letter.isalpha():
+            raise InvalidGuess("Please enter a single letter (a-z)")
 
     def _check_game_state(self) -> None:
         """Check and update game over conditions."""

@@ -90,12 +90,18 @@ class TestInputHandler:
         assert result.input_type == InputType.QUIT
 
     def test_validate_letter_short_quit(self, input_handler):
-        """Test that short quit commands work."""
+        """Test that single letter 'q' is treated as a valid letter guess.
+
+        Note: Previously 'q' was a quit command, but this conflicted with
+        valid letter guesses. Now only full words 'quit' and 'exit' are
+        recognized as quit commands (BUG FIX: hangman-hxk).
+        """
         result = input_handler.validate_letter("q")
 
-        # 'q' is treated as a quit command for quick exit
-        # QUIT_COMMANDS includes: quit, exit, q
-        assert result.input_type == InputType.QUIT
+        # 'q' is now a valid letter guess, not a quit command
+        assert result.input_type == InputType.LETTER
+        assert result.is_valid is True
+        assert result.value == "q"
 
     def test_validate_replay_yes(self, input_handler):
         """Test validating yes responses."""
@@ -130,7 +136,8 @@ class TestInputHandler:
         assert input_handler.is_quit_command("QUIT") is True
         assert input_handler.is_quit_command("  quit  ") is True
         assert input_handler.is_quit_command("exit") is True
-        assert input_handler.is_quit_command("q") is True
+        # Single letter 'q' is NOT a quit command (it's a valid guess)
+        assert input_handler.is_quit_command("q") is False
         assert input_handler.is_quit_command("play") is False
         assert input_handler.is_quit_command("a") is False
 

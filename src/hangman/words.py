@@ -120,6 +120,11 @@ class WordListManager:
         for json_file in json_files:
             self._load_word_file(json_file)
 
+        # Check if any words were loaded from all files
+        total_words = sum(len(words) for words in self._words.values())
+        if total_words == 0:
+            raise EmptyWordList("All word list files contain empty categories")
+
         self._loaded = True
         return self._words
 

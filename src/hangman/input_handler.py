@@ -59,8 +59,8 @@ class InputHandler:
     Provides methods to read, validate, and sanitize user input.
     """
 
-    # Quit commands
-    QUIT_COMMANDS = {"quit", "exit", "q"}
+    # Quit commands (full words only - single letters are valid guesses)
+    QUIT_COMMANDS = {"quit", "exit"}
 
     # Yes responses for replay
     YES_RESPONSES = {"yes", "y"}

@@ -136,9 +136,9 @@ class TestWordListManager:
 
     def test_empty_word_list(self, word_list_manager):
         """Test handling of empty word list directory.
-        
-        Note: Currently only raises EmptyWordList when no JSON files exist.
-        BUG (hangman-kgf): Should also raise when JSON files have empty categories.
+
+        Note: BUG FIX (hangman-kgf) - Now raises EmptyWordList when JSON files
+        have empty categories, not just when no JSON files exist.
         """
         with TemporaryDirectory() as tmpdir:
             # Create an empty JSON file
@@ -146,12 +146,9 @@ class TestWordListManager:
             with open(empty_file, "w") as f:
                 json.dump({"categories": {}}, f)
 
-            # Current behavior: loads without error (BUG: should raise EmptyWordList)
-            # Test documents current behavior until bug is fixed
-            word_list_manager.load_word_lists(Path(tmpdir))
-            
-            # Verify no words were loaded
-            assert len(word_list_manager._words) == 0
+            # Should now raise EmptyWordList when files have empty categories
+            with pytest.raises(EmptyWordList):
+                word_list_manager.load_word_lists(Path(tmpdir))
 
     def test_reload(self, word_list_manager):
         """Test reloading word lists."""

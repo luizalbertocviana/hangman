@@ -197,16 +197,20 @@ class TestGameEngineEdgeCases:
         # Note: This could be considered a bug depending on requirements
 
     def test_duplicate_guess_detection_case_insensitive(self):
-        """Test duplicate detection is case-insensitive."""
+        """Test duplicate detection is case-insensitive.
+
+        Note: BUG FIX (hangman-6xv) - Duplicate guesses now return GuessResult
+        with is_duplicate=True instead of raising InvalidGuess exception.
+        """
         engine = GameEngine()
         word = WordEntry(word="test", category="test", difficulty=Difficulty.EASY)
         engine.start_game(word)
 
         engine.make_guess("t")
-        # Current implementation raises exception for duplicates
-        # This is documented in BUG: hangman-6xv
-        with pytest.raises(InvalidGuess):
-            engine.make_guess("T")
+        # Duplicate guess should return GuessResult with is_duplicate=True
+        result = engine.make_guess("T")
+        assert result.is_duplicate is True
+        assert result.letter == "t"
 
     def test_get_display_word_before_start(self):
         """Test get_display_word raises before game starts."""
