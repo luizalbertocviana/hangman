@@ -9,7 +9,6 @@ from __future__ import annotations
 import sys
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Set
 
 
 class InputType(Enum):
@@ -36,8 +35,8 @@ class ValidationResult:
 
     input_type: InputType
     is_valid: bool
-    value: Optional[str] = None
-    error_message: Optional[str] = None
+    value: str | None = None
+    error_message: str | None = None
 
 
 class InputError(Exception):
@@ -46,7 +45,7 @@ class InputError(Exception):
     pass
 
 
-class QuitRequested(InputError):
+class QuitRequestedError(InputError):
     """Exception raised when user requests to quit."""
 
     pass
@@ -70,9 +69,9 @@ class InputHandler:
 
     def __init__(self) -> None:
         """Initialize the input handler."""
-        self._guessed_letters: Set[str] = set()
+        self._guessed_letters: set[str] = set()
 
-    def set_guessed_letters(self, letters: Set[str]) -> None:
+    def set_guessed_letters(self, letters: set[str]) -> None:
         """
         Set the set of already guessed letters.
 
@@ -93,7 +92,7 @@ class InputHandler:
 
         Raises:
             InputError: If there's an error reading input.
-            QuitRequested: If user sends EOF (Ctrl+D/Ctrl+Z).
+            QuitRequestedError: If user sends EOF (Ctrl+D/Ctrl+Z).
         """
         try:
             # Write prompt to stderr to keep output clean
@@ -106,12 +105,12 @@ class InputHandler:
 
             # Check for EOF (Ctrl+D on Unix, Ctrl+Z on Windows)
             if not line:
-                raise QuitRequested("User requested exit (EOF)")
+                raise QuitRequestedError("User requested exit (EOF)")
 
             return line.rstrip("\n\r")
 
         except KeyboardInterrupt:
-            raise QuitRequested("User requested exit (Ctrl+C)")
+            raise QuitRequestedError("User requested exit (Ctrl+C)") from None
 
     def validate_letter(self, user_input: str) -> ValidationResult:
         """

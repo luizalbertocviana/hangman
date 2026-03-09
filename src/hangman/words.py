@@ -11,7 +11,6 @@ import random
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 
 class Difficulty(Enum):
@@ -48,13 +47,13 @@ class WordListError(Exception):
     pass
 
 
-class WordListNotFound(WordListError):
+class WordListNotFoundError(WordListError):
     """Exception raised when word list file is not found."""
 
     pass
 
 
-class EmptyWordList(WordListError):
+class EmptyWordListError(WordListError):
     """Exception raised when word list is empty."""
 
     pass
@@ -68,7 +67,7 @@ class WordListManager:
     by category and difficulty.
     """
 
-    def __init__(self, word_lists_path: Optional[Path] = None) -> None:
+    def __init__(self, word_lists_path: Path | None = None) -> None:
         """
         Initialize the word list manager.
 
@@ -76,11 +75,11 @@ class WordListManager:
             word_lists_path: Path to the directory containing word list files.
         """
         self._word_lists_path = word_lists_path
-        self._words: Dict[str, List[WordEntry]] = {}
-        self._categories: Set[str] = set()
+        self._words: dict[str, list[WordEntry]] = {}
+        self._categories: set[str] = set()
         self._loaded = False
 
-    def load_word_lists(self, path: Optional[Path] = None) -> Dict[str, List[WordEntry]]:
+    def load_word_lists(self, path: Path | None = None) -> dict[str, list[WordEntry]]:
         """
         Load word lists from JSON files.
 
@@ -103,10 +102,10 @@ class WordListManager:
         word_lists_dir = Path(self._word_lists_path)
 
         if not word_lists_dir.exists():
-            raise WordListNotFound(f"Word lists directory not found: {word_lists_dir}")
+            raise WordListNotFoundError(f"Word lists directory not found: {word_lists_dir}")
 
         if not word_lists_dir.is_dir():
-            raise WordListNotFound(f"Path is not a directory: {word_lists_dir}")
+            raise WordListNotFoundError(f"Path is not a directory: {word_lists_dir}")
 
         self._words = {}
         self._categories = set()
@@ -115,7 +114,7 @@ class WordListManager:
         json_files = list(word_lists_dir.glob("*.json"))
 
         if not json_files:
-            raise EmptyWordList("No word list files found in directory")
+            raise EmptyWordListError("No word list files found in directory")
 
         for json_file in json_files:
             self._load_word_file(json_file)
@@ -123,7 +122,7 @@ class WordListManager:
         # Check if any words were loaded from all files
         total_words = sum(len(words) for words in self._words.values())
         if total_words == 0:
-            raise EmptyWordList("All word list files contain empty categories")
+            raise EmptyWordListError("All word list files contain empty categories")
 
         self._loaded = True
         return self._words
@@ -139,11 +138,11 @@ class WordListManager:
             WordListError: If the file cannot be parsed or is invalid.
         """
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 data = json.load(f)
         except json.JSONDecodeError as e:
             raise WordListError(f"Invalid JSON in {file_path}: {e}") from e
-        except IOError as e:
+        except OSError as e:
             raise WordListError(f"Cannot read {file_path}: {e}") from e
 
         if not isinstance(data, dict) or "categories" not in data:
@@ -182,8 +181,8 @@ class WordListManager:
 
     def get_random_word(
         self,
-        category: Optional[str] = None,
-        difficulty: Optional[Difficulty] = None,
+        category: str | None = None,
+        difficulty: Difficulty | None = None,
     ) -> WordEntry:
         """
         Get a random word, optionally filtered by category and difficulty.
@@ -209,7 +208,7 @@ class WordListManager:
                 filter_desc.append(f"category='{category}'")
             if difficulty:
                 filter_desc.append(f"difficulty='{difficulty.value}'")
-            raise EmptyWordList(
+            raise EmptyWordListError(
                 f"No words available for filters: {', '.join(filter_desc)}"
             )
 
@@ -217,9 +216,9 @@ class WordListManager:
 
     def _get_filtered_words(
         self,
-        category: Optional[str] = None,
-        difficulty: Optional[Difficulty] = None,
-    ) -> List[WordEntry]:
+        category: str | None = None,
+        difficulty: Difficulty | None = None,
+    ) -> list[WordEntry]:
         """
         Get words filtered by category and difficulty.
 
@@ -232,15 +231,15 @@ class WordListManager:
         """
         if category is None and difficulty is None:
             # Return all words
-            all_words: List[WordEntry] = []
+            all_words: list[WordEntry] = []
             for words in self._words.values():
                 all_words.extend(words)
             return all_words
 
-        candidates: List[WordEntry] = []
+        candidates: list[WordEntry] = []
 
         # Determine which categories to search
-        categories_to_search: List[str] = []
+        categories_to_search: list[str] = []
         if category is None:
             categories_to_search = list(self._words.keys())
         elif category in self._words:
@@ -253,7 +252,7 @@ class WordListManager:
 
         return candidates
 
-    def get_categories(self) -> List[str]:
+    def get_categories(self) -> list[str]:
         """
         Get list of available categories.
 
@@ -262,9 +261,9 @@ class WordListManager:
         """
         if not self._loaded:
             self.load_word_lists()
-        return sorted(list(self._categories))
+        return sorted(self._categories)
 
-    def get_difficulties(self) -> List[Difficulty]:
+    def get_difficulties(self) -> list[Difficulty]:
         """
         Get list of available difficulty levels.
 
@@ -275,8 +274,8 @@ class WordListManager:
 
     def get_word_count(
         self,
-        category: Optional[str] = None,
-        difficulty: Optional[Difficulty] = None,
+        category: str | None = None,
+        difficulty: Difficulty | None = None,
     ) -> int:
         """
         Get count of words matching filters.

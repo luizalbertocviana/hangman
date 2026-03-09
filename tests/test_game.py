@@ -10,8 +10,8 @@ from hangman.game import (
     GameState,
     GuessResult,
     GameError,
-    InvalidGuess,
-    GameNotStarted,
+    InvalidGuessError,
+    GameNotStartedError,
 )
 from hangman.words import Difficulty, WordEntry
 
@@ -97,17 +97,17 @@ class TestGameEngine:
 
     def test_make_guess_before_start(self, game_engine):
         """Test that guessing before start raises error."""
-        with pytest.raises(GameNotStarted):
+        with pytest.raises(GameNotStartedError):
             game_engine.make_guess("a")
 
     def test_make_guess_invalid_letter(self, game_engine, word_entry):
         """Test that invalid guesses raise errors."""
         game_engine.start_game(word_entry)
 
-        with pytest.raises(InvalidGuess):
+        with pytest.raises(InvalidGuessError):
             game_engine.make_guess("ab")  # Multiple letters
 
-        with pytest.raises(InvalidGuess):
+        with pytest.raises(InvalidGuessError):
             game_engine.make_guess("1")  # Non-alpha
 
     def test_get_display_word(self, game_engine, word_entry):
@@ -213,7 +213,7 @@ class TestGameEngine:
         game_engine.reset()
 
         assert game_engine.is_started is False
-        with pytest.raises(GameNotStarted):
+        with pytest.raises(GameNotStartedError):
             game_engine.get_display_word()
 
 

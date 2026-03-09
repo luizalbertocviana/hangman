@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
 
 from .words import Difficulty, WordEntry
 
@@ -19,13 +18,13 @@ class GameError(Exception):
     pass
 
 
-class InvalidGuess(GameError):
+class InvalidGuessError(GameError):
     """Exception raised for invalid guess attempts."""
 
     pass
 
 
-class GameNotStarted(GameError):
+class GameNotStartedError(GameError):
     """Exception raised when game actions are attempted before starting."""
 
     pass
@@ -74,13 +73,13 @@ class GameState:
     word: str = ""
     category: str = ""
     difficulty: Difficulty = Difficulty.EASY
-    guessed_letters: Set[str] = field(default_factory=set)
+    guessed_letters: set[str] = field(default_factory=set)
     incorrect_guesses: int = 0
     max_incorrect_guesses: int = 6
     is_game_over: bool = False
     is_win: bool = False
     start_time: datetime = field(default_factory=datetime.now)
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
 
     def reset(self) -> None:
         """Reset the game state to initial values."""
@@ -123,7 +122,7 @@ class GameEngine:
         return self._started
 
     def start_game(
-        self, word_entry: WordEntry, max_incorrect_guesses: Optional[int] = None
+        self, word_entry: WordEntry, max_incorrect_guesses: int | None = None
     ) -> GameState:
         """
         Start a new game with the given word.
@@ -158,11 +157,11 @@ class GameEngine:
             GuessResult with the outcome of the guess.
 
         Raises:
-            GameNotStarted: If game hasn't been started.
-            InvalidGuess: If the guess is invalid.
+            GameNotStartedError: If game hasn't been started.
+            InvalidGuessError: If the guess is invalid.
         """
         if not self._started:
-            raise GameNotStarted("Game has not been started")
+            raise GameNotStartedError("Game has not been started")
 
         # Validate the guess (but not for duplicates - we handle that below)
         if not self._state.is_game_over:
@@ -205,16 +204,16 @@ class GameEngine:
             letter: The letter to validate.
 
         Raises:
-            InvalidGuess: If the guess is invalid.
+            InvalidGuessError: If the guess is invalid.
         """
         if len(letter) != 1:
-            raise InvalidGuess("Please enter only one letter at a time")
+            raise InvalidGuessError("Please enter only one letter at a time")
 
         if not letter.isalpha():
-            raise InvalidGuess("Please enter a single letter (a-z)")
+            raise InvalidGuessError("Please enter a single letter (a-z)")
 
         if letter.lower() in self._state.guessed_letters:
-            raise InvalidGuess(f"You already guessed '{letter}'")
+            raise InvalidGuessError(f"You already guessed '{letter}'")
 
     def _validate_guess_non_duplicate(self, letter: str) -> None:
         """
@@ -227,13 +226,13 @@ class GameEngine:
             letter: The letter to validate.
 
         Raises:
-            InvalidGuess: If the guess is invalid (not a duplicate).
+            InvalidGuessError: If the guess is invalid (not a duplicate).
         """
         if len(letter) != 1:
-            raise InvalidGuess("Please enter only one letter at a time")
+            raise InvalidGuessError("Please enter only one letter at a time")
 
         if not letter.isalpha():
-            raise InvalidGuess("Please enter a single letter (a-z)")
+            raise InvalidGuessError("Please enter a single letter (a-z)")
 
     def _check_game_state(self) -> None:
         """Check and update game over conditions."""
@@ -259,10 +258,10 @@ class GameEngine:
             String with guessed letters shown and others as underscores.
 
         Raises:
-            GameNotStarted: If game hasn't been started.
+            GameNotStartedError: If game hasn't been started.
         """
         if not self._started:
-            raise GameNotStarted("Game has not been started")
+            raise GameNotStartedError("Game has not been started")
 
         display = []
         for char in self._state.word:
@@ -281,10 +280,10 @@ class GameEngine:
             Integer from 0 to max_incorrect_guesses representing stage.
 
         Raises:
-            GameNotStarted: If game hasn't been started.
+            GameNotStartedError: If game hasn't been started.
         """
         if not self._started:
-            raise GameNotStarted("Game has not been started")
+            raise GameNotStartedError("Game has not been started")
 
         return self._state.incorrect_guesses
 
@@ -315,7 +314,7 @@ class GameEngine:
         """
         return self._state.max_incorrect_guesses - self._state.incorrect_guesses
 
-    def get_guessed_letters(self) -> Set[str]:
+    def get_guessed_letters(self) -> set[str]:
         """
         Get the set of guessed letters.
 

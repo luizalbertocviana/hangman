@@ -12,8 +12,8 @@ from hangman.words import (
     WordEntry,
     Difficulty,
     WordListError,
-    WordListNotFound,
-    EmptyWordList,
+    WordListNotFoundError,
+    EmptyWordListError,
 )
 
 
@@ -131,7 +131,7 @@ class TestWordListManager:
 
     def test_load_nonexistent_directory(self, word_list_manager):
         """Test loading from a nonexistent directory."""
-        with pytest.raises(WordListNotFound):
+        with pytest.raises(WordListNotFoundError):
             word_list_manager.load_word_lists(Path("/nonexistent/path"))
 
     def test_empty_word_list(self, word_list_manager):
@@ -147,7 +147,7 @@ class TestWordListManager:
                 json.dump({"categories": {}}, f)
 
             # Should now raise EmptyWordList when files have empty categories
-            with pytest.raises(EmptyWordList):
+            with pytest.raises(EmptyWordListError):
                 word_list_manager.load_word_lists(Path(tmpdir))
 
     def test_reload(self, word_list_manager):

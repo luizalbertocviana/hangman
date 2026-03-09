@@ -8,7 +8,7 @@ from hangman.input_handler import (
     InputHandler,
     InputType,
     ValidationResult,
-    QuitRequested,
+    QuitRequestedError,
 )
 
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 import os
 import sys
 from enum import Enum
-from typing import List, Optional
 
 from .game import GameState
 
@@ -140,7 +139,7 @@ class UIRenderer:
             enable_colors: Whether to use ANSI colors in output.
         """
         self._enable_colors = enable_colors
-        self._last_message_type: Optional[MessageType] = None
+        self._last_message_type: MessageType | None = None
 
     @property
     def enable_colors(self) -> bool:
@@ -222,8 +221,8 @@ class UIRenderer:
     def display_game_state(
         self,
         state: GameState,
-        category: Optional[str] = None,
-        difficulty: Optional[str] = None,
+        category: str | None = None,
+        difficulty: str | None = None,
     ) -> None:
         """
         Display the current game state.

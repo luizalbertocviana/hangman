@@ -6,10 +6,9 @@ Handles loading, validating, and providing application configuration settings.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
@@ -104,8 +103,8 @@ class ConfigurationManager:
     Loads configuration from YAML files and provides validated settings.
     """
 
-    _instance: Optional[ConfigurationManager] = None
-    _config: Optional[Config] = None
+    _instance: ConfigurationManager | None = None
+    _config: Config | None = None
 
     def __new__(cls) -> ConfigurationManager:
         """Ensure singleton instance."""
@@ -119,7 +118,7 @@ class ConfigurationManager:
             self._config = None
             self._initialized = True
 
-    def load(self, config_path: Optional[str] = None) -> Config:
+    def load(self, config_path: str | None = None) -> Config:
         """
         Load configuration from a YAML file.
 
@@ -142,7 +141,7 @@ class ConfigurationManager:
                 self._config = Config()
                 return self._config
 
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
 
             if data is None:
@@ -154,7 +153,7 @@ class ConfigurationManager:
 
         except yaml.YAMLError as e:
             raise ConfigurationError(f"Invalid YAML in config file: {e}") from e
-        except IOError as e:
+        except OSError as e:
             raise ConfigurationError(f"Cannot read config file: {e}") from e
 
     def _get_default_config_path(self) -> str:

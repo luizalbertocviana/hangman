@@ -14,10 +14,9 @@ Run with --help for more information.
 from __future__ import annotations
 
 import sys
-from typing import List, Optional
 
 
-def parse_args(args: Optional[List[str]] = None) -> bool:
+def parse_args(args: list[str] | None = None) -> bool:
     """
     Parse command-line arguments.
 

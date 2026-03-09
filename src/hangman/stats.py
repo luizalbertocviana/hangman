@@ -10,7 +10,7 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 @dataclass
@@ -70,7 +70,7 @@ class SessionStats:
             return 0.0
         return (self.games_won / self.games_played) * 100
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Convert stats to a dictionary for serialization.
 
@@ -89,7 +89,7 @@ class SessionStats:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> SessionStats:
+    def from_dict(cls, data: dict[str, Any]) -> SessionStats:
         """
         Create SessionStats from a dictionary.
 
@@ -142,9 +142,9 @@ class StatsManager:
     Loads and saves statistics to a JSON file.
     """
 
-    _instance: Optional[StatsManager] = None
-    _stats: Optional[SessionStats] = None
-    _stats_file: Optional[Path] = None
+    _instance: StatsManager | None = None
+    _stats: SessionStats | None = None
+    _stats_file: Path | None = None
 
     def __new__(cls) -> StatsManager:
         """Ensure singleton instance."""
@@ -159,7 +159,7 @@ class StatsManager:
             self._stats_file = None
             self._initialized = True
 
-    def initialize(self, stats_file_path: Optional[Path] = None) -> SessionStats:
+    def initialize(self, stats_file_path: Path | None = None) -> SessionStats:
         """
         Initialize the stats manager and load existing stats.
 
@@ -196,7 +196,7 @@ class StatsManager:
             return SessionStats()
 
         try:
-            with open(self._stats_file, "r", encoding="utf-8") as f:
+            with open(self._stats_file, encoding="utf-8") as f:
                 data = json.load(f)
 
             # Handle versioned stats files
@@ -208,7 +208,7 @@ class StatsManager:
                     # Old format (direct stats)
                     return SessionStats.from_dict(data)
 
-        except (json.JSONDecodeError, IOError):
+        except (json.JSONDecodeError, OSError):
             # Return new stats if file is corrupted
             pass
 
@@ -239,7 +239,7 @@ class StatsManager:
 
             return True
 
-        except IOError:
+        except OSError:
             return False
 
     def get_stats(self) -> SessionStats:
@@ -265,7 +265,7 @@ class StatsManager:
             self._stats = SessionStats()
         self._stats.record_game(is_win, guesses_made)
 
-    def get_display_stats(self) -> Dict[str, Any]:
+    def get_display_stats(self) -> dict[str, Any]:
         """
         Get statistics formatted for display.
 

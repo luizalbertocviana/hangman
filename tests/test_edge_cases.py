@@ -20,14 +20,14 @@ from hangman.game import (
     GameState,
     GuessResult,
     GameError,
-    InvalidGuess,
-    GameNotStarted,
+    InvalidGuessError,
+    GameNotStartedError,
 )
 from hangman.input_handler import (
     InputHandler,
     InputType,
     ValidationResult,
-    QuitRequested,
+    QuitRequestedError,
 )
 from hangman.renderer import UIRenderer, MessageType
 from hangman.stats import SessionStats, StatsManager
@@ -36,8 +36,8 @@ from hangman.words import (
     WordEntry,
     Difficulty,
     WordListError,
-    WordListNotFound,
-    EmptyWordList,
+    WordListNotFoundError,
+    EmptyWordListError,
 )
 from hangman.config import (
     Config,
@@ -215,13 +215,13 @@ class TestGameEngineEdgeCases:
     def test_get_display_word_before_start(self):
         """Test get_display_word raises before game starts."""
         engine = GameEngine()
-        with pytest.raises(GameNotStarted):
+        with pytest.raises(GameNotStartedError):
             engine.get_display_word()
 
     def test_get_hangman_stage_before_start(self):
         """Test get_hangman_stage raises before game starts."""
         engine = GameEngine()
-        with pytest.raises(GameNotStarted):
+        with pytest.raises(GameNotStartedError):
             engine.get_hangman_stage()
 
     def test_game_duration_zero_before_end(self):
@@ -501,7 +501,7 @@ class TestWordListEdgeCases:
             manager.load_word_lists(Path(tmpdir))
 
             # Request non-existent category
-            with pytest.raises(EmptyWordList):
+            with pytest.raises(EmptyWordListError):
                 manager.get_random_word(category="nonexistent")
 
     def test_word_list_reload_after_modification(self):
@@ -624,7 +624,7 @@ class TestSecurityRequirements:
 
         for path in traversal_paths:
             # Should not crash, should raise appropriate error
-            with pytest.raises((WordListNotFound, FileNotFoundError)):
+            with pytest.raises((WordListNotFoundError, FileNotFoundError)):
                 manager.load_word_lists(path)
 
     def test_graceful_error_handling_no_crashes(self):
@@ -633,12 +633,12 @@ class TestSecurityRequirements:
 
         # Invalid game state
         engine = GameEngine()
-        with pytest.raises(GameNotStarted):
+        with pytest.raises(GameNotStartedError):
             engine.make_guess("a")
 
         # Invalid word list path
         manager = WordListManager()
-        with pytest.raises(WordListNotFound):
+        with pytest.raises(WordListNotFoundError):
             manager.load_word_lists(Path("/nonexistent"))
 
         # All should raise specific exceptions, not crash

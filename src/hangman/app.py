@@ -8,14 +8,13 @@ from __future__ import annotations
 
 import signal
 import sys
-from typing import Optional
 
 from .config import Config, ConfigurationManager
-from .game import GameEngine, GameState
-from .input_handler import InputHandler, InputType, QuitRequested, ValidationResult
+from .game import GameEngine
+from .input_handler import InputHandler, InputType, QuitRequestedError
 from .renderer import MessageType, UIRenderer
-from .stats import SessionStats, StatsManager
-from .words import Difficulty, WordEntry, WordListManager, WordListError
+from .stats import StatsManager
+from .words import WordListError, WordListManager
 
 
 class ApplicationController:
@@ -27,13 +26,13 @@ class ApplicationController:
 
     def __init__(self) -> None:
         """Initialize the application controller."""
-        self._config: Optional[Config] = None
+        self._config: Config | None = None
         self._config_manager = ConfigurationManager()
-        self._word_manager: Optional[WordListManager] = None
-        self._game_engine: Optional[GameEngine] = None
-        self._input_handler: Optional[InputHandler] = None
-        self._renderer: Optional[UIRenderer] = None
-        self._stats_manager: Optional[StatsManager] = None
+        self._word_manager: WordListManager | None = None
+        self._game_engine: GameEngine | None = None
+        self._input_handler: InputHandler | None = None
+        self._renderer: UIRenderer | None = None
+        self._stats_manager: StatsManager | None = None
         self._running = False
 
     def initialize(self) -> bool:
@@ -125,7 +124,7 @@ class ApplicationController:
 
             return 0
 
-        except QuitRequested:
+        except QuitRequestedError:
             self._renderer.display_goodbye()
             if self._stats_manager:
                 self._stats_manager.save()
@@ -201,7 +200,7 @@ class ApplicationController:
             result = self._input_handler.validate_letter(user_input)
 
             if result.input_type == InputType.QUIT:
-                raise QuitRequested("User requested exit")
+                raise QuitRequestedError("User requested exit")
 
             if not result.is_valid:
                 self._renderer.display_invalid_input(result.error_message or "")
@@ -218,7 +217,7 @@ class ApplicationController:
                 else:
                     self._renderer.display_incorrect_guess(result.value)
 
-        except QuitRequested:
+        except QuitRequestedError:
             raise
 
     def _handle_game_over(self) -> None:
@@ -271,7 +270,7 @@ class ApplicationController:
                 if result.error_message:
                     self._renderer.display_invalid_input(result.error_message)
 
-        except QuitRequested:
+        except QuitRequestedError:
             return False
 
         return False
